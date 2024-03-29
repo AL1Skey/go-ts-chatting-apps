@@ -53,5 +53,11 @@
 ```
 
 > server/internal/users/ are model directories for table users(It's you that need to create it)
-> users_repository.go serve as packages that you need to create
+> users_repository.go serve as packages that run sql queries for users that you need to create
 > users.go serve as models for table users that you need to create
+
+- Go syntax breakdown
+```
+// syntax: func (<receiver AKA inheritence>) <name function>(<parameter>) (<return value>,<return value>)
+func (r *repository) CreateUser(ctx context.Context, user *User) (*User, error)
+```
