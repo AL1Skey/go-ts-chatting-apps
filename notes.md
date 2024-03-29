@@ -51,3 +51,7 @@
 ```
     migrate -path db/migrations -database "postgres://root:password@localhost:5433" -verbose up
 ```
+
+> server/internal/users/ are model directories for table users(It's you that need to create it)
+> users_repository.go serve as packages that you need to create
+> users.go serve as models for table users that you need to create
