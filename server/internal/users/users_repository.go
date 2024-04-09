@@ -34,11 +34,6 @@ type DBTX interface {
 	// BeginTx is similar to Begin, but takes a context.Context and a sql.TxOptions as its arguments.
 	// It is used to start a transaction with specific options.
 	BeginTx(ctx context.Context, opts *sql.TxOptions) (*sql.Tx, error)
-	// Commit commits the current transaction.
-	Commit() error
-	// Rollback rolls back the current transaction.
-	Rollback() error
-	// Close closes the database connection.
 	Close() error
 }
 

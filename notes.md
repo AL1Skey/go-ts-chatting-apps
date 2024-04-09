@@ -61,3 +61,18 @@
 // syntax: func (<receiver AKA inheritence>) <name function>(<parameter>) (<return value>,<return value>)
 func (r *repository) CreateUser(ctx context.Context, user *User) (*User, error)
 ```
+
+> Notes: in internal/users/user_repository.go, the interface are requirements functions akin of parameters, if you add Commit() inside interface, it'll be error when 
+
+> Notes: when opening sql connections, you need to be sure that you include the host,user,password, and database name.
+
+This is Good
+```go
+package db
+db, err := sql.Open("postgres", "postgres://root:password@localhost:5433/go-chat?sslmode=disable")
+```
+and This is Bad
+```go
+package db
+db, err := sql.Open("postgres", "postgres://root:password@localhost:5433/?sslmode=disable")
+```
