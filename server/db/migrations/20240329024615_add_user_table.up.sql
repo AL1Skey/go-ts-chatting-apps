@@ -1,6 +1,7 @@
-CREATE TABLE "users"(
+CREATE TABLE IF NOT EXISTS "users"(
     "id" bigserial PRIMARY KEY,
     "username" varchar NOT NULL,
     "email" varchar NOT NULL,
     "password" varchar NOT NULL   
 );
+

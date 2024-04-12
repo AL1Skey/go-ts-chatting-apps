@@ -28,7 +28,7 @@ func NewDatabase() (*Database, error) {
 	return &Database{db: db}, nil
 }
 
-// Close closes the underlying SQL.DB instance.
+// Close the underlying SQL.DB instance.
 func Close(d *Database) error {
 	return d.db.Close()
 }

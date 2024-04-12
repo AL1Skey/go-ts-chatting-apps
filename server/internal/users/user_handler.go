@@ -55,3 +55,28 @@ func (h *Handler) CreateUser(c *gin.Context) {
 
 	c.JSON(http.StatusOK, res)
 }
+
+// LoginUser method
+func (h *Handler) LoginUser(c *gin.Context) {
+	var u LoginUserReq
+	if err := c.ShouldBindJSON(&u); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	}
+	res, err := h.Service.LoginUser(c.Request.Context(), &u)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.SetCookie("jwt", res.access_token, 3600, "/", "localhost", false, true)
+
+	user := LoginUserRes{
+		Username: res.Username,
+		ID:       res.ID,
+	}
+	c.JSON(http.StatusOK, user)
+}
+
+func (h *Handler) LogoutUser(c *gin.Context) {
+	c.SetCookie("jwt", "", -1, "", "", false, true)
+	c.JSON(http.StatusOK, gin.H{"message": "Logged Out Successfully"})
+}

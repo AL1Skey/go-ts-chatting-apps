@@ -14,6 +14,7 @@ import (
 	"server/db"
 	"server/internal/users"
 	"server/router"
+	"server/ws"
 )
 
 /*
@@ -27,17 +28,24 @@ Return values:
 
 The function initializes the database using the NewDatabase function from the "server/db" package. If an error occurs during the initialization, it logs the error using the Fatal function from the "log" package.
 */
+
 func main() {
 	dbConn, err := db.NewDatabase()
 	if err != nil {
 		log.Fatal("Error: %s", err)
 	}
 
+	// Intialize Users
 	userRep := users.NewRepository(dbConn.GetDB())
 	userSvc := users.NewService(userRep)
 	userHandler := users.NewHandler(userSvc)
 
-	router.InitHandler(userHandler)
+	// Initialize Websockets
+	websocketHub := ws.NewHub()
+	websocketHandler := ws.NewHandler(websocketHub)
+	go websocketHub.Run()
+
+	router.InitHandler(userHandler, websocketHandler)
 	router.Start("0.0.0.0:8080")
 
 }

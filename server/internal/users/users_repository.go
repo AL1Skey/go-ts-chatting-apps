@@ -55,6 +55,7 @@ func NewRepository(db DBTX) *repository {
 func (r *repository) CreateUser(ctx context.Context, user *User) (*User, error) {
 	// lastInsertId is used to store the ID of the inserted user.
 	var lastInsertId int64
+
 	// query is a string that contains the SQL query for inserting a new user.
 	query := "INSERT INTO users (username, password, email) VALUES ($1, $2, $3) returning id"
 	// err is used to store the error returned by the QueryRowContext method.
@@ -68,5 +69,17 @@ func (r *repository) CreateUser(ctx context.Context, user *User) (*User, error) 
 	// The ID of the inserted user is set to the User struct.
 	user.ID = int64(lastInsertId)
 	// The User struct and nil error are returned to the caller.
+	return user, nil
+}
+
+func (r *repository) GetUserByEmail(ctx context.Context, email string) (User, error) {
+	user := User{}
+	query := "SELECT * FROM users WHERE email = $1"
+
+	err := r.db.QueryRowContext(ctx, query, email).Scan(&user.ID, &user.Email, &user.Username, &user.Password)
+	if err != nil {
+		return User{}, err
+	}
+
 	return user, nil
 }

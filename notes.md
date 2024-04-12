@@ -34,11 +34,15 @@
     go mod tidy
 ```
 
+- Install golang-migrate to migrate your database
+
 - create migration with extension sql with table name add_user_table to folder db/migrations
 ```
     migrate create -ext sql -dir db/migrations add_user_table
 ```
-
+- Undo all the migrations
+```
+migrate --path db/migrations -database "postgres://root:password@localhost:5433/go-chat?sslmode=disable" -verbose drop -f
 ```
 - up file are for creating table from migration
 - down file are for go backwards and deleting the table created by migrations
@@ -75,4 +79,17 @@ and This is Bad
 ```go
 package db
 db, err := sql.Open("postgres", "postgres://root:password@localhost:5433/?sslmode=disable")
+```
+
+> Notes:
+```go
+user := User{}
+query := "SELECT * FROM users WHERE email = $1"
+err := r.db.QueryRowContext(ctx,query,email).Scan(&u.Username,&u.Email)
+```
+Scan in this codes are to retreive the results of the query and store it to variable user by reference.
+
+> Debug the websocket with postman by adding Websocket request on postman and add this link
+```cmd
+ws://localhost:8080/ws/join-room/1?userId=1&username=user
 ```

@@ -21,6 +21,7 @@ func HashPassword(password string) (string, error) {
 
 // CheckPassword compares the given password with the hashed password.
 // It returns an error if the password does not match the hashed password.
-func CheckPassword(password string, hashpw string) error {
+func CheckPassword(hashpw string, password string) error {
+	// panic(fmt.Sprintf("Password %s, hashed password %s", password, hashpw))
 	return bcrypt.CompareHashAndPassword([]byte(hashpw), []byte(password))
 }

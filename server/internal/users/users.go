@@ -1,7 +1,11 @@
 // The `users` package contains code for working with a database.
 package users
 
-import "context"
+import (
+	"context"
+
+	"github.com/golang-jwt/jwt/v4"
+)
 
 // A User represents a single user in the database, with a unique ID, username, email, and password.
 type User struct {
@@ -23,6 +27,7 @@ type Repository interface {
 	// CreateUser takes a new user and a special tag that says what computer is doing the command.
 	// It then sends a command to the database to add the new user.
 	CreateUser(contextTag context.Context, newUser *User) (*User, error)
+	GetUserByEmail(ctx context.Context, email string) (User, error)
 }
 
 // Service is an interface that represents a thing that can do different things to the `users` table.
@@ -30,6 +35,7 @@ type Service interface {
 	// CreateUser takes a new user and a special tag that says what computer is doing the command.
 	// It then sends a command to the database to add the new user.
 	CreateUser(ctx context.Context, user *CreateUserReq) (*CreateUserRes, error)
+	LoginUser(c context.Context, req *LoginUserReq) (LoginUserRes, error)
 }
 
 // CreateUserReq is a struct that represents a request to create a new user.
@@ -54,4 +60,21 @@ type CreateUserRes struct {
 
 	// Email is the user's email address.
 	Email string `json:"email" db:"email"`
+}
+
+type LoginUserReq struct {
+	Email    string `json:"email" db:"email"`
+	Password string `json:"password" db:"password"`
+}
+
+type LoginUserRes struct {
+	access_token string
+	ID           string `json:"id" db:"id"`
+	Username     string `json:"username" db:"username"`
+}
+
+type MyJWTClaims struct {
+	ID       string `json:"id" db:"id"`
+	Username string `json:"username" db:"username"`
+	jwt.RegisteredClaims
 }

@@ -6,6 +6,8 @@ import (
 	"server/internal/util" // Provides utility functions for the application.
 	"strconv"              // Provides functions for converting between string and numeric types.
 	"time"                 // Provides functionality for measuring and displaying time.
+
+	"github.com/golang-jwt/jwt/v4" // Provides JWT credentials
 )
 
 // service is a struct that contains a Repository and a timeout duration.
@@ -53,4 +55,37 @@ func (s *service) CreateUser(c context.Context, req *CreateUserReq) (*CreateUser
 		Email:    r.Email,
 	}
 	return res, nil
+}
+
+func (s *service) LoginUser(c context.Context, req *LoginUserReq) (LoginUserRes, error) {
+	ctx, cancel := context.WithTimeout(c, s.timeout)
+
+	defer cancel()
+
+	user, err := s.Repository.GetUserByEmail(ctx, req.Email)
+	if err != nil {
+		return LoginUserRes{}, err
+	}
+	err = util.CheckPassword(user.Password, req.Password)
+
+	if err != nil {
+		return LoginUserRes{}, err
+	}
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, MyJWTClaims{
+		ID:       strconv.Itoa(int(user.ID)),
+		Username: user.Username,
+		RegisteredClaims: jwt.RegisteredClaims{
+			Issuer:    strconv.Itoa(int(user.ID)),
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(24 * time.Hour)),
+		},
+	})
+
+	ss, err := token.SignedString([]byte("secret"))
+
+	if err != nil {
+		return LoginUserRes{}, err
+	}
+
+	return LoginUserRes{access_token: ss, Username: user.Username, ID: strconv.Itoa(int(user.ID))}, nil
 }
