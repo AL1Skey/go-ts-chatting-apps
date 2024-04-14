@@ -14,6 +14,11 @@ type Room struct {
 	Clients map[string]*Client `json:"clients"`
 }
 
+type RoomRes struct {
+	ID   string `json:"id"`
+	Name string `json:"name"`
+}
+
 type Hub struct {
 	Rooms      map[string]*Room `json:"rooms"`
 	Register   chan *Client
@@ -27,6 +32,11 @@ type Client struct {
 	Message  chan *Message
 	ID       string `json:"id"`
 	RoomId   string `json:"room_id"`
+	Username string `json:"username"`
+}
+
+type ClientResponse struct {
+	ID       string `json:"id"`
 	Username string `json:"username"`
 }
 

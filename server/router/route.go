@@ -20,7 +20,9 @@ func InitHandler(userHandler *users.Handler, websocketHandler *ws.Handler) {
 
 	// Rooms Routings
 	r.POST("/ws/create-room", websocketHandler.CreateRoom)
-	r.GET("/ws/join-room", websocketHandler.JoinRoom)
+	r.GET("/ws/get-room", websocketHandler.GetRoom)
+	r.GET("/ws/join-room/:roomId", websocketHandler.JoinRoom)
+	r.GET("/ws/get-client/:roomId", websocketHandler.GetClient)
 }
 
 func Start(addr string) error {

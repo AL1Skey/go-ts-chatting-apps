@@ -26,13 +26,25 @@ func (hub *Handler) CreateRoom(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, request)
 
 	hub.hub.Rooms[request.ID] = &Room{
 		ID:      request.ID,
 		Name:    request.Name,
 		Clients: make(map[string]*Client),
 	}
+	c.JSON(http.StatusOK, request)
+}
+
+func (hub *Handler) GetRoom(c *gin.Context) {
+	room := make([]RoomRes, 0)
+
+	for _, val := range hub.hub.Rooms {
+		room = append(room, RoomRes{
+			ID:   val.ID,
+			Name: val.Name,
+		})
+	}
+	c.JSON(http.StatusOK, room)
 }
 
 // upgrader is a Gorilla WebSocket Upgrader instance that is used to upgrade HTTP connections to WebSocket connections.

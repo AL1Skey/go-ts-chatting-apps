@@ -2,7 +2,9 @@ package ws
 
 import (
 	"log"
+	"net/http"
 
+	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
 )
 
@@ -45,4 +47,24 @@ func (c *Client) readMessage(hub *Hub) {
 		}
 		hub.Broadcast <- m
 	}
+}
+
+func (hub *Handler) GetClient(c *gin.Context) {
+	var client []ClientResponse
+
+	roomId := c.Param("roomId")
+
+	if _, ok := hub.hub.Rooms[roomId]; ok {
+		client = make([]ClientResponse, 0)
+		c.JSON(http.StatusOK, client)
+	}
+
+	for _, c := range hub.hub.Rooms[roomId].Clients {
+		client = append(client, ClientResponse{
+			ID:       c.ID,
+			Username: c.Username,
+		})
+	}
+
+	c.JSON(http.StatusOK, client)
 }

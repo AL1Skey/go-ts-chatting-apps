@@ -43,6 +43,7 @@ func main() {
 	// Initialize Websockets
 	websocketHub := ws.NewHub()
 	websocketHandler := ws.NewHandler(websocketHub)
+	// Run the websocket on separate goroutines
 	go websocketHub.Run()
 
 	router.InitHandler(userHandler, websocketHandler)

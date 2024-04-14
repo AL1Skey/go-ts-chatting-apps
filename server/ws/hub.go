@@ -47,7 +47,9 @@ func (h *Hub) Run() {
 		// If the message's room exists, it sends the message to all clients in the room.
 		case msg := <-h.Broadcast:
 			if _, ok := h.Rooms[msg.RoomID]; ok {
+
 				for _, cl := range h.Rooms[msg.RoomID].Clients {
+					// Send the message to all clients
 					cl.Message <- msg
 				}
 			}
